@@ -1,0 +1,16 @@
+---
+title: "assignment_1a"
+author: "Allison Bailey"
+date: "2/15/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Why I Am Taking This Course
+My specialization at Bren is Data Science Management. This course will further hone my skills and learn best practices in software design concepts.  I am specifically excited to learn how to better utilize Github and prepare myself for robust collaboration within the coding field. I learn best through practical application, which is why I think this particular course is a great fit in learning conceptual program designs and languages. I am also interested in branching out my coding languages to include Python, so I hope this course will broaden my insights into the various languages. 
+
+### My Data Science Background
+Prior to coming to Bren, most of my data experience was within the government sector using Microsoft Excel. This experience was limited, as I operated on the strategic level and managed data analysts who generated the analysis. I have also dabbled in html coding and web design. Bren was my first introduction into coding through the R programming language. I have taken both ESM 206 and 244 (and loved it).  I am currently in the data viz course as well as GIS. 
