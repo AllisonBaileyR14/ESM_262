@@ -1,0 +1,4 @@
+power <- function(crolling = 0.015, m, g, v, o, c_d = 0.3) {
+  power = crolling * m * g * v * 0.5 * a * p_a * v^3
+}
+
