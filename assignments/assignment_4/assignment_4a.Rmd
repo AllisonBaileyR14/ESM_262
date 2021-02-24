@@ -1,6 +1,6 @@
 ---
 title: "assignment_2b"
-author: "Allison Bailey"
+author: "Allison Bailey, Bri Baker, Cameryn Brock"
 date: "2/22/2021"
 output: html_document
 ---
@@ -65,10 +65,6 @@ for_loop_calc = as.data.frame(matrix(nrow=length(c_rolling), ncol=nrow(possible_
 #
 
 
-for (i in 1:nrow(possible_cars)) {
-  powerall3[,i] = autopower(A=possible_cars$area[i], m=possible_cars$mass[i], V=speeds)
-}
-
 for (i in 1:nrow(possible_cars)) { 
   for_loop_calc[,i] = power_fun(a=possible_cars$area[i], m=possible_cars$mass[i], v=120*.28, c_r = c_rolling)
   
@@ -77,12 +73,22 @@ for (i in 1:nrow(possible_cars)) {
 
 ```
 
+```{r}
+car_power_loop = for_loop_calc %>% 
+  pivot_longer(cols=everything(), names_to="car", values_to="power")
+
+```
+
 ```{r for box}
 ##box plot of power consumed for each car type (where the boxes will show ranges across the different highways
 
-for_plot <- ggplot(DATA, aes(car, power, fill=car))+
+for_plot <- ggplot(car_power_loop, aes(car, power, fill=car))+
   geom_boxplot()+
-  ggtitle("For Loop")
+  ggtitle("For Loop")+
+  labs(y="Power (watts)",
+       x="Cars")
+
+for_plot
 
 ```
 
@@ -94,144 +100,29 @@ Here we utilize `pmap()`  to compute the power for each of 100 different highway
 
 ```{r pmap calc}
 
-pmap_calc <- pmap(list(changing variables), static variables) #%>% 
-  as.data.frame(col.names = ) #%>% 
+pmap_calc <- pmap(list(a=possible_cars$area, m=possible_cars$mass), power_fun, v=120*.28, c_r=c_rolling) 
+  
+pmap_df <- pmap_calc %>%
+  as.data.frame(col.names = possible_cars$name) %>% 
   pivot_longer(cols=everything(), 
                names_to="car", 
                values_to="power")
+  
+  
 
 ```
 
 ```{r pmap box}
 ##box plot of power consumed for each car type (where the boxes will show ranges across the different highways
 
-pmap_plot <- ggplot(DATA, aes(car, power, fill=car))+
+pmap_plot <- ggplot(pmap_df, aes(car, power, fill=car))+
   geom_boxplot()+
-  ggtitle("pmap")
+  ggtitle("pmap") +
+   labs(y="Power (watts)",
+       x="Cars")
+
+pmap_plot
 
 ```
 
-
-
-
--------below here is reference info, delete after completion-------
-
-
-
-
-```{r withpmap}
-
-# the first part, generating speeds is the same
-# what is I want to estimate average power use given  each car
-
-possible_cars
-
-# the first part is the same as above
-# use sample to generate a distribution of speeds
-
-# assume a log normal distribution of speeds with mean 100km/hr
-# recall our function needs speed in m/s not km/hr so we will also do a conversion
-# lets get a sample of a 200 speeds- we could also do this by actually measuring speeds
-
-nsample = 200
-mean_speed = log(100*0.277)
-
-speeds = rlnorm(mean=mean_speed, sd=0.1*mean_speed, nsample)
-summary(speeds)
-
-plot(density(speeds), ylab="Distribution of Speeds in (m/s)")
-
-
-# how do we run each car for all speeds 
-# pmap runs a function for each value in a list of parameters, with other parameters set for each iteration
-
-
-powerall2 = pmap(list(A = possible_cars$area, m=possible_cars$mass), autopower, V=speeds)
-
-# lets turn to a data frame for easier graphing
-# we can add column names
-powerall2 = as.data.frame(powerall2, col.names=possible_cars$name)
-
-
-# for plotting sometimes its useful to turn columns in to rows
-powerallr2 = powerall2 %>% pivot_longer(cols=everything(), names_to="car", values_to="power")
-head(powerallr2)
-
-# quick visualization
-
-method2_plot = ggplot(powerallr2, aes(car,power, fill=car))+geom_boxplot()+ggtitle("pmap")
-method2_plot
-
-
-```
-
-# Third - classic looping *for*
-
-*pmap* works quickly but it is unique to R
-Other programming language (and R) use what are called loops - where repetition is more explicit
-
-Lets do this one more time using a *for* loop
-
-```{r withforloop}
-
-# the first part, generating speeds is the same
-# what is I want to estimate average power use given  each car
-
-possible_cars
-
-# use sample to generate a distribution of speeds
-
-# assume a log normal distribution of speeds with mean 100km/hr
-# recall our function needs speed in m/s not km/hr so we will also do a conversion
-# lets get a sample of a 200 speeds- we could also do this by actually measuring speeds
-
-nsample = 200
-mean_speed = log(100*0.277)
-
-speeds = rlnorm(mean=mean_speed, sd=0.1*mean_speed, nsample)
-summary(speeds)
-
-plot(density(speeds), ylab="Distribution of Speeds in (m/s)")
-
-
-# how do we run each car for all speeds 
-# we use a for loop to cycle through
-# we need to create a data frame to store results - as above
-# one column for each car and one row for each speed
-
-powerall3 = as.data.frame(matrix(nrow=length(speeds), ncol=nrow(possible_cars)))
-# because we don't initialize it - values are NA
-head(powerall3)
-
-# how many cars area there
-nrow(possible_cars)
-# for loops use an index - in this case "i" but you could use anything - it repeats
-# anything between the {} for each values of i between 1 and nrow(possible_car) (which is 3 in our case)
-
-# index in to a matrix (like powerall3) is by row and column powerall3[2,5] is 2nd row and 5th column
-for (i in 1:nrow(possible_cars)) {
-  powerall3[,i] = autopower(A=possible_cars$area[i], m=possible_cars$mass[i], V=speeds)
-}
-
-# now it looks like above
-head(powerall3)
-# we can add column names
-colnames(powerall3)=possible_cars$name
-
-# plotting is the same as above
-
-# for plotting sometimes its useful to turn columns in to rows
-powerallr3 = powerall3 %>% pivot_longer(cols=everything(), names_to="car", values_to="power")
-head(powerallr3)
-
-# quick visualization
-method3_plot = ggplot(powerallr3, aes(car,power, fill=car))+geom_boxplot()+ggtitle("For Loop")
-
-ggarrange(method1_plot, method2_plot, method3_plot, nrow=3)
-
-powerall1 %>% map(mean)
-powerall2 %>% map(mean)
-powerall3 %>% map(mean)
-
-```
 

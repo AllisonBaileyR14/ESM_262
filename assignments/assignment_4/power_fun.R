@@ -14,6 +14,8 @@ power_fun <- function(m, v, a,
                       g = 9.8, p_a = 1.2, 
                       c_d = 0.3, c_r = 0.015) {
   v=ifelse((v<0), return("Velocity must be greater than zero"), v)
+  a=ifelse((a<0), return("Area must be greater than zero"), a)
+  m=ifelse((m<0), return("Mass must be greater than zero"), m)
   power = c_r * m * g * v + 0.5 * a * p_a * v^3 
 }
 
