@@ -1,0 +1,62 @@
+---
+title: "Assignment 2a"
+author: "Allison Bailey"
+date: "2/17/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+# equation used to compute automobile fuel efficiency is the power require to keep a car moving at a given speed is as follows:
+
+power_fun <- function(m, v, a,
+                      g = 9.8, p_a = 1.2,
+                      c_d = 0.3, c_r = 0.015) {
+  power = c_r * m * g * v + 0.5 * a * p_a * v^3
+} 
+
+
+power_fun
+
+
+
+```
+
+```{r}
+
+speed <- c(30, (40*0.278), (80*0.278)) # speed on four highways
+
+power_heavy <- power_fun(m = 31725, v = speed, a = 9) # power as a function of speed
+power_heavy
+
+power_light <- power_fun(m = 31725*0.75, v = speed, a = 9)
+power_light
+
+
+```
+
+```{r}
+# Plot power as a function of speed
+
+library(tidyverse)
+
+power_speed <- data.frame(speed, power_heavy, power_light) %>%
+  rename(heavy = power_heavy,
+         light = power_light) %>%
+  pivot_longer(cols = 2:3,
+               names_to = "mass",
+               values_to = "power")
+
+ggplot(power_speed, aes(x = speed, y = power)) +
+  geom_line(aes(color = mass)) +
+  theme_minimal() +
+  scale_color_manual(values = c("deepskyblue4", "deepskyblue3")) +
+  labs(title = "Vehicle Power as a Function of Speed and Mass",
+       x = "Speed (m/s)",
+       y = "Power (Watts)",
+       color = "Mass (kg)")
+```
+
