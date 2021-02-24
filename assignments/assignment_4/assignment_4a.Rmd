@@ -61,10 +61,16 @@ Here we utilize a `for()` loop to compute the power for each of 100 different hi
 ```{r for loop calc}
 
 #set up df
-
+for_loop_calc = as.data.frame(matrix(nrow=length(c_rolling), ncol=nrow(possible_cars)))
 #
 
-for (variable in vector) {
+
+for (i in 1:nrow(possible_cars)) {
+  powerall3[,i] = autopower(A=possible_cars$area[i], m=possible_cars$mass[i], V=speeds)
+}
+
+for (i in 1:nrow(possible_cars)) { 
+  for_loop_calc[,i] = power_fun(a=possible_cars$area[i], m=possible_cars$mass[i], v=120*.28, c_r = c_rolling)
   
 }
 
